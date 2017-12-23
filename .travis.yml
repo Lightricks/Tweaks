@@ -1,4 +1,5 @@
+osx_image: xcode9.2
 language: objective-c
 script: 
-  - xcodebuild test -project FBTweak.xcodeproj -scheme FBTweak -sdk iphonesimulator
-  - xcodebuild archive -workspace FBTweakExample.xcworkspace -scheme FBTweakExample CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+  - xcodebuild -project FBTweak.xcodeproj -scheme FBTweak -destination 'platform=iOS Simulator,name=iPhone 7,OS=latest' test
+  - xcodebuild -workspace FBTweakExample.xcworkspace -scheme FBTweakExample CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO archive
