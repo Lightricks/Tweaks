@@ -34,7 +34,7 @@
   if ((self = [self init])) {
     _orderedCategories = [[coder decodeObjectForKey:@"categories"] mutableCopy];
     
-    for (FBTweakCategory *tweakCategory in _orderedCategories) {
+    for (id<FBTweakCategory> tweakCategory in _orderedCategories) {
       [_namedCategories setObject:tweakCategory forKey:tweakCategory.name];
     }
   }
@@ -62,18 +62,25 @@
   return [_orderedCategories copy];
 }
 
-- (FBTweakCategory *)tweakCategoryWithName:(NSString *)name
-{
+- (id<FBTweakCategory>)tweakCategoryWithName:(NSString *)name {
   return _namedCategories[name];
 }
 
-- (void)addTweakCategory:(FBTweakCategory *)category
+- (FBNativeTweakCategory *)nativeTweakCategoryWithName:(NSString *)name {
+  FBNativeTweakCategory *nativeCategory = _namedCategories[name];
+  if (![nativeCategory isKindOfClass:[FBNativeTweakCategory class]]) {
+    return nil;
+  }
+  return nativeCategory;
+}
+
+- (void)addTweakCategory:(id<FBTweakCategory>)category
 {
   [_namedCategories setObject:category forKey:category.name];
   [_orderedCategories addObject:category];
 }
 
-- (void)removeTweakCategory:(FBTweakCategory *)category
+- (void)removeTweakCategory:(id<FBTweakCategory>)category
 {
   [_namedCategories removeObjectForKey:category.name];
   [_orderedCategories removeObject:category];
@@ -81,14 +88,8 @@
 
 - (void)reset
 {
-  for (FBTweakCategory *category in self.tweakCategories) {
-    for (FBTweakCollection *collection in category.tweakCollections) {
-      for (FBTweak *tweak in collection.tweaks) {
-        if (!tweak.isAction) {
-          tweak.currentValue = nil;
-        }
-      }
-    }
+  for (id<FBTweakCategory> category in self.tweakCategories) {
+    [category reset];
   }
 }
 

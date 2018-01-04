@@ -101,8 +101,8 @@ static FBTweak *_FBTweakCreateWithEntry(NSString *identifier, fb_tweak_entry *en
 #define fb_tweak_getsectbynamefromheader getsectbynamefromheader
 #endif
   
-  FBTweakStore *store = [FBTweakStore sharedInstance];
-  
+  NSMutableDictionary<NSString *, FBNativeTweakCategory *> *categories = [NSMutableDictionary dictionary];
+
   uint32_t image_count = _dyld_image_count();
   for (uint32_t image_index = 0; image_index < image_count; image_index++) {
     const fb_tweak_header *mach_header = (const fb_tweak_header *)_dyld_get_image_header(image_index);
@@ -115,10 +115,12 @@ static FBTweak *_FBTweakCreateWithEntry(NSString *identifier, fb_tweak_entry *en
     size_t count = size / sizeof(fb_tweak_entry);
     for (size_t i = 0; i < count; i++) {
       fb_tweak_entry *entry = &data[i];
-      FBTweakCategory *category = [store tweakCategoryWithName:*entry->category];
+
+      NSString *categoryName = *entry->category;
+      FBNativeTweakCategory *category = categories[categoryName];
       if (category == nil) {
-        category = [[FBTweakCategory alloc] initWithName:*entry->category];
-        [store addTweakCategory:category];
+        category = [[FBNativeTweakCategory alloc] initWithName:categoryName];
+        categories[categoryName] = category;
       }
     
       FBTweakCollection *collection = [category tweakCollectionWithName:*entry->collection];
@@ -137,6 +139,12 @@ static FBTweak *_FBTweakCreateWithEntry(NSString *identifier, fb_tweak_entry *en
       }
     }
   }
+
+  FBTweakStore *store = [FBTweakStore sharedInstance];
+  [categories enumerateKeysAndObjectsUsingBlock:
+   ^(NSString * _Nonnull __unused name, FBNativeTweakCategory * _Nonnull category, BOOL * _Nonnull stop) {
+     [store addTweakCategory:category];
+  }];
 }
 
 @end

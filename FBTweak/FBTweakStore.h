@@ -9,7 +9,9 @@
 
 #import <Foundation/Foundation.h>
 
-@class FBTweakCategory;
+@class FBNativeTweakCategory;
+
+@protocol FBTweakCategory;
 
 /**
   @abstract The global store for tweaks.
@@ -22,28 +24,35 @@
 + (instancetype)sharedInstance;
 
 /**
-  @abstract The tweak categories in the store.
+  @abstract All tweak categories in the store.
  */
 @property (nonatomic, copy, readonly) NSArray *tweakCategories;
 
-/** 
-  @abstract Finds a tweak category by name.
-  @param name The name of the category to find.
-  @return The category if found, nil otherwise.
+/**
+ @abstract Finds a tweak category by name.
+ @param name The name of the category to find.
+ @return The category if found, nil otherwise.
  */
-- (FBTweakCategory *)tweakCategoryWithName:(NSString *)name;
+- (id<FBTweakCategory>)tweakCategoryWithName:(NSString *)name;
+
+/** 
+  @abstract Finds a native tweak category by name.
+  @param name The name of the category to find.
+  @return The native category if found, nil otherwise.
+ */
+- (FBNativeTweakCategory *)nativeTweakCategoryWithName:(NSString *)name;
 
 /**
   @abstract Registers a tweak category with the store.
   @param category The tweak category to register.
  */
-- (void)addTweakCategory:(FBTweakCategory *)category;
+- (void)addTweakCategory:(id<FBTweakCategory>)category;
 
 /**
   @abstract Removes a tweak category from the store.
   @param category The tweak category to remove.
  */
-- (void)removeTweakCategory:(FBTweakCategory *)category;
+- (void)removeTweakCategory:(id<FBTweakCategory>)category;
 
 /**
   @abstract Resets all tweaks in the store.

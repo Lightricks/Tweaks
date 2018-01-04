@@ -9,23 +9,23 @@
 
 #import <UIKit/UIKit.h>
 
-@class FBTweakCategory;
+@protocol FBTweakCategory;
 @protocol _FBTweakCollectionViewControllerDelegate;
 
 /**
   @abstract Displays configuration options for tweak collections.
  */
-@interface _FBTweakCollectionViewController : UIViewController
+@interface _FBTweakCollectionViewController : UITableViewController
 
 /**
   @abstract Create a tweak collection view controller.
   @param category The tweak category to show the collections in.
   @discussion This is the designated initializer.
  */
-- (instancetype)initWithTweakCategory:(FBTweakCategory *)category;
+- (instancetype)initWithTweakCategory:(id<FBTweakCategory>)category;
 
 //! @abstract The tweak category to show the collections in.
-@property (nonatomic, strong, readonly) FBTweakCategory *tweakCategory;
+@property (nonatomic, strong, readonly) id<FBTweakCategory> tweakCategory;
 
 /**
   @abstract Responds to actions from the items list.

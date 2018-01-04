@@ -7,24 +7,30 @@
  of patent rights can be found in the PATENTS file in the same directory.
  */
 
+#import "FBTweak.h"
 #import "FBTweakCategory.h"
 #import "FBTweakCollection.h"
 
-@implementation FBTweakCategory {
-  NSMutableArray *_orderedCollections;
-  NSMutableDictionary *_namedCollections;
-}
+@interface FBNativeTweakCategory ()
+
+/**
+ @abstract The collections contained in this category.
+ */
+@property (nonatomic, copy, readwrite) NSMutableArray<FBTweakCollection *> *tweakCollections;
+
+@end
+
+@implementation FBNativeTweakCategory
+
+@synthesize name = _name;
+@synthesize tweakCollections = _tweakCollections;
 
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
   NSString *name = [coder decodeObjectForKey:@"name"];
   
   if ((self = [self initWithName:name])) {
-    _orderedCollections = [[coder decodeObjectForKey:@"collections"] mutableCopy];
-    
-    for (FBTweakCollection *tweakCollection in _orderedCollections) {
-      [_namedCollections setObject:tweakCollection forKey:tweakCollection.name];
-    }
+    _tweakCollections = [coder decodeObjectForKey:@"collections"];
   }
   
   return self;
@@ -34,9 +40,7 @@
 {
   if ((self = [super init])) {
     _name = [name copy];
-    
-    _orderedCollections = [[NSMutableArray alloc] initWithCapacity:4];
-    _namedCollections = [[NSMutableDictionary alloc] initWithCapacity:4];
+    _tweakCollections = [NSMutableArray array];
   }
   
   return self;
@@ -44,30 +48,40 @@
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
-  [coder encodeObject:_name forKey:@"name"];
-  [coder encodeObject:_orderedCollections forKey:@"collections"];
+  [coder encodeObject:self.name forKey:@"name"];
+  [coder encodeObject:self.tweakCollections forKey:@"collections"];
 }
 
 - (FBTweakCollection *)tweakCollectionWithName:(NSString *)name
 {
-  return _namedCollections[name];
-}
-
-- (NSArray *)tweakCollections
-{
-  return [_orderedCollections copy];
+  NSUInteger index = [_tweakCollections indexOfObjectPassingTest:
+                      ^BOOL(FBTweakCollection * _Nonnull collection, NSUInteger __unused idx, BOOL * _Nonnull stop) {
+    return [collection.name isEqualToString:name];
+  }];
+  return index != NSNotFound ? [self.tweakCollections objectAtIndex:index] : nil;
 }
 
 - (void)addTweakCollection:(FBTweakCollection *)tweakCollection
 {
-  [_orderedCollections addObject:tweakCollection];
-  [_namedCollections setObject:tweakCollection forKey:tweakCollection.name];
+  [self.tweakCollections addObject:tweakCollection];
+  self.tweakCollections = self.tweakCollections;
 }
 
 - (void)removeTweakCollection:(FBTweakCollection *)tweakCollection
 {
-  [_orderedCollections removeObject:tweakCollection];
-  [_namedCollections removeObjectForKey:tweakCollection.name];
+  NSMutableArray<FBTweakCollection *> *collections = self.tweakCollections;
+  [collections removeObject:tweakCollection];
+  self.tweakCollections = collections;
+}
+
+- (void)reset {
+  for (FBTweakCollection *collection in self.tweakCollections) {
+    for (FBTweak *tweak in collection.tweaks) {
+      if (!tweak.isAction) {
+        tweak.currentValue = nil;
+      }
+    }
+  }
 }
 
 @end

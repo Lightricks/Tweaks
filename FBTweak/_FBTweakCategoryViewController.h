@@ -10,7 +10,7 @@
 #import <UIKit/UIKit.h>
 
 @class FBTweakStore;
-@class FBTweakCategory;
+@protocol FBTweakCategory;
 @protocol _FBTweakCategoryViewControllerDelegate;
 
 /**
@@ -44,7 +44,7 @@
   @param viewController The view controller with the selected category.
   @param category The category that was selected.
  */
-- (void)tweakCategoryViewController:(_FBTweakCategoryViewController *)viewController selectedCategory:(FBTweakCategory *)category;
+- (void)tweakCategoryViewController:(_FBTweakCategoryViewController *)viewController selectedCategory:(id<FBTweakCategory>)category;
 
 /**
   @abstract Called when done is selected.

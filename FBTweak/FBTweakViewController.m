@@ -35,7 +35,7 @@ NSString *const FBTweakShakeViewControllerDidDismissNotification = @"FBTweakShak
     categoryViewController.delegate = self;
     [self pushViewController:categoryViewController animated:NO];
 
-    FBTweakCategory *category = nil;
+    id<FBTweakCategory> category = nil;
     if (categoryName && (category = [store tweakCategoryWithName:categoryName])) {
       _FBTweakCollectionViewController *collectionViewController = [[_FBTweakCollectionViewController alloc] initWithTweakCategory:category];
       collectionViewController.delegate = self;
@@ -46,7 +46,7 @@ NSString *const FBTweakShakeViewControllerDidDismissNotification = @"FBTweakShak
   return self;
 }
 
-- (void)tweakCategoryViewController:(_FBTweakCategoryViewController *)viewController selectedCategory:(FBTweakCategory *)category
+- (void)tweakCategoryViewController:(_FBTweakCategoryViewController *)viewController selectedCategory:(id<FBTweakCategory>)category
 {
   _FBTweakCollectionViewController *collectionViewController = [[_FBTweakCollectionViewController alloc] initWithTweakCategory:category];
   collectionViewController.delegate = self;

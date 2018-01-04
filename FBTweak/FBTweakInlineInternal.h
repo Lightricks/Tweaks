@@ -94,7 +94,7 @@ extern NSString *_FBTweakIdentifier(fb_tweak_entry *entry);
 \
   /* find the registered tweak with the given identifier. */ \
   FBTweakStore *store = [FBTweakStore sharedInstance]; \
-  FBTweakCategory *category = [store tweakCategoryWithName:category__]; \
+  FBNativeTweakCategory *category = [store nativeTweakCategoryWithName:category__]; \
   FBTweakCollection *collection = [category tweakCollectionWithName:collection__]; \
 \
   NSString *identifier = _FBTweakIdentifier(&entry); \

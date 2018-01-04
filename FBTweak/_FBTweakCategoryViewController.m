@@ -33,7 +33,7 @@
     self.title = @"Tweaks";
     
     _store = store;
-    _sortedCategories = [_store.tweakCategories sortedArrayUsingComparator:^(FBTweakCategory *a, FBTweakCategory *b) {
+    _sortedCategories = [_store.tweakCategories sortedArrayUsingComparator:^(id<FBTweakCategory> a, id<FBTweakCategory> b) {
       return [a.name localizedStandardCompare:b.name];
     }];
   }
@@ -169,7 +169,7 @@
   
   cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
-  FBTweakCategory *category = _sortedCategories[indexPath.row];
+  id<FBTweakCategory> category = _sortedCategories[indexPath.row];
   cell.textLabel.text = category.name;
   
   return cell;
@@ -177,7 +177,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  FBTweakCategory *category = _sortedCategories[indexPath.row];
+  id<FBTweakCategory> category = _sortedCategories[indexPath.row];
   [_delegate tweakCategoryViewController:self selectedCategory:category];
 }
 
